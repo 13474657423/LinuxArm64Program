@@ -1,0 +1,358 @@
+<html>
+  <head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>i5ting_ztree_toc:LinuxArm64</title>
+		<link href="toc/style/github-bf51422f4bb36427d391e4b75a1daa083c2d840e.css" media="all" rel="stylesheet" type="text/css"/>
+		<link href="toc/style/github2-d731afd4f624c99a4b19ad69f3083cd6d02b81d5.css" media="all" rel="stylesheet" type="text/css"/>
+		<link href="toc/css/zTreeStyle/zTreeStyle.css" media="all" rel="stylesheet" type="text/css"/>
+	  <style>
+		pre {
+		    counter-reset: line-numbering;
+		    border: solid 1px #d9d9d9;
+		    border-radius: 0;
+		    background: #fff;
+		    padding: 0;
+		    line-height: 23px;
+		    margin-bottom: 30px;
+		    white-space: pre;
+		    overflow-x: auto;
+		    word-break: inherit;
+		    word-wrap: inherit;
+		}
+
+		pre a::before {
+		  content: counter(line-numbering);
+		  counter-increment: line-numbering;
+		  padding-right: 1em; /* space after numbers */
+		  width: 25px;
+		  text-align: right;
+		  opacity: 0.7;
+		  display: inline-block;
+		  color: #aaa;
+		  background: #eee;
+		  margin-right: 16px;
+		  padding: 2px 10px;
+		  font-size: 13px;
+		  -webkit-touch-callout: none;
+		  -webkit-user-select: none;
+		  -khtml-user-select: none;
+		  -moz-user-select: none;
+		  -ms-user-select: none;
+		  user-select: none;
+		}
+
+		pre a:first-of-type::before {
+		  padding-top: 10px;
+		}
+
+		pre a:last-of-type::before {
+		  padding-bottom: 10px;
+		}
+
+		pre a:only-of-type::before {
+		  padding: 10px;
+		}
+
+		.highlight { background-color: #ffffcc } /* RIGHT */
+		</style>
+  </head>
+  <body>
+	  <div>
+				<div style='width:25%;'>
+						<ul id="tree" class="ztree" style='width:100%'>
+
+						</ul>
+				</div>
+        <div id='readme' style='width:70%;margin-left:20%;'>
+          	<article class='markdown-body'>
+            	<h1 id="linux-arm64-">Linux Arm64位开发板程序验证</h1>
+<h2 id="1-net5-webapi-">1.基于.Net5开发后台WebApi验证</h2>
+<h3 id="1-1-">1.1开发环境搭建</h3>
+<ol>
+<li>1.1根据自己的linux系统到官网下载对应的dotnet环境安装包，并根据开发从程序的版本下载对应的安装包文件，文档中以linux arm64位系统，开发程序为.net5.0说明。下载地址为:<a href="https://dotnet.microsoft.com/zh-cn/download/dotnet/5.0">下载 .NET 5.0 (Linux、macOS 和 Windows) (microsoft.com)</a>，如图1所示:</li>
+</ol>
+<p><img src="toc/images/image-20230720082557695.png" alt=""></p>
+<p>​                                                                                                        图1</p>
+<p>我这里下载的是SDK5.0.408版本;</p>
+<ol>
+<li>1.2使用工具将文件拷贝到开发板内存中，我这里使用的是FileZilla工具。如果不知道ip地址，可以使用PuTTY工具查询。具体查询步骤:</li>
+</ol>
+<p>​        1.1.2.1打开PuTTY软件，先在设备管理器里面查看一下COM口。如图2所示</p>
+<p><img src="toc/images/image-20230720083117357.png" alt="image-20230720083117357"></p>
+<p>​                                                                                                        图2</p>
+<p>​        1.1.2.2选择Serial选项，填写对应的COM口和波特率,这里是115200,点击“Open”即可。如图3所示</p>
+<p><img src="toc/images/image-20230720083147024.png" alt="image-20230720083147024"></p>
+<p>​                                                                                                            图3</p>
+<p>​        1.1.2.3在命令行中输入:ifconfig，如图4所示</p>
+<p><img src="toc/images/image-20230720083226152.png" alt="image-20230720083226152"></p>
+<p>​                                                                                                    图4</p>
+<p>1.1.3 打开工具并联连接。拷贝文件。如图5所示；为了好区分，我这里在usr中新建了一个share文件夹，并将文件拷贝到里面。如图6所示</p>
+<p><img src="toc/images/image-20230720083356070.png" alt="image-20230720083356070"><img src="toc/images/image-20230720083434285.png" alt="image-20230720083434285"></p>
+<p>​                                                                                 图5                                                                                                    图6</p>
+<p>1.1.4 在TuTTY中定位到此文件夹下,输入cd /usr/share/dotnet；配置环境变量，在PuTTY中执行</p>
+<pre><code class="lang-pascal">export DOTNET_ROOT=/usr/share/dotnet
+
+export PATH=$PATH:/usr/share/dotnet
+</code></pre>
+<p>执行</p>
+<pre><code class="lang-pascal">dotnet  --version
+</code></pre>
+<p>如果提示</p>
+<p><img src="toc/images/wps1.jpg" alt="img">说明没有权限，需要执行</p>
+<pre><code class="lang-pascal">chmod 777 dotnet
+</code></pre>
+<p>在执行dotner --version;如果出现</p>
+<p><img src="toc/images/wps2.jpg" alt="img">对应的版本说明环境配置成功了</p>
+<h3 id="1-2-">1.2程序创建及编码</h3>
+<p>1.2.1打开vs2019，新建一个ASP.NET Core Web Api程序，并新加一个Controller控制器.名称为DataController.代码如下</p>
+<pre><code class="lang-c#">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ActionPower.WebApi.Controllers
+{
+    [Route(&quot;api/[controller]&quot;)]
+    [ApiController]
+    public class DataController : ControllerBase
+    {
+        private readonly string jsonFilePath = &quot;data.json&quot;;
+        [HttpPost]
+        public IActionResult PostData([FromBody] Dictionary&lt;string, string&gt; data)
+        {
+            // 从 JSON 文件读取数据
+            var jsonData = System.IO.File.ReadAllText(jsonFilePath);
+            var dataRead = JsonSerializer.Deserialize&lt;Dictionary&lt;string, string&gt;&gt;(jsonData);
+            foreach (var item in data.Keys)
+            {
+                if(dataRead.ContainsKey(item))
+                {
+                    dataRead[item] = data[item];
+                }
+                else
+                {
+                    dataRead.Add(item,data[item]);
+                }
+            }
+            // 将数据保存到 JSON 文件
+            var jsonWriteData = JsonSerializer.Serialize(dataRead);
+            System.IO.File.WriteAllText(jsonFilePath, jsonWriteData);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult GetData(string Address)
+        {
+            if (!System.IO.File.Exists(jsonFilePath))
+            {
+                return NotFound();
+            }
+            // 从 JSON 文件读取数据
+            var jsonData = System.IO.File.ReadAllText(jsonFilePath);
+            var data = JsonSerializer.Deserialize&lt;Dictionary&lt;string, string&gt;&gt;(jsonData);
+            if (data.ContainsKey(Address))
+            {
+                return Ok(data[Address]);
+            }
+            else
+            {
+                return Ok(&quot;&quot;);
+            }
+        }
+    }
+}
+
+</code></pre>
+<p>1.2.2在程序的.csproj文件中添加,如图7所示</p>
+<pre><code class="lang-c#">&lt;RuntimeIdentifiers&gt;linux-arm64&lt;/RuntimeIdentifiers&gt;
+</code></pre>
+<p><img src="toc/images/image-20230720090811654.png" alt="image-20230720090811654"></p>
+<p>​                                                                                                        图7</p>
+<p>1.2.3在程序目录用cmd打开，依次输入</p>
+<pre><code class="lang-pascal">dotnet restore -r linux-arm64
+dotnet deb install
+dotnet msbuild AValoniaWebApiTest.csproj /t:CreateDeb /p:TargetFramework=net5.0 /p:RuntimeIdentifier=linux-arm64 /p:Configuration=Release
+</code></pre>
+<p>其中AValoniaWebApiTest.csproj是程序名称的.csproj文件，TargetFramework=net5.0指定发布的.net版本；RuntimeIdentifier=linux-arm64指定编译后的程序运行的系统。</p>
+<p>1.2.4将发布好的文件拷贝到arm64位开发板中，定位到程序下，然后运行</p>
+<pre><code class="lang-pascal">dotnet ActionPower.WebApi.dll --urls=&quot;http://192.168.0.232:9001&quot;
+</code></pre>
+<p>这里的--urls=&quot;<a href="http://192.168.0.232:9001&quot;可以根据自己的要求配置ip地址和端口号">http://192.168.0.232:9001&quot;可以根据自己的要求配置ip地址和端口号</a></p>
+<p>1.2.5在浏览器中输入<a href="http://192.168.0.232:9001/Swagger/index.html,出现如图8所示的界面表示配置成功了">http://192.168.0.232:9001/Swagger/index.html,出现如图8所示的界面表示配置成功了</a></p>
+<p><img src="toc/images/image-20230720091936623.png" alt="image-20230720091936623"></p>
+<p>​                                                                                        图8</p>
+<h3 id="1-3-">1.3验证结果</h3>
+<p>通过上面的步骤可以看出在Linux arm64位嵌入式开发板中部署Web Api接口是可以实现的，它可以使的软件的前后端分离开发得以实现。由后端开发与硬件通信的接口提供给前端调用即可。</p>
+<h3 id="1-4-">1.4遇到的问题及解决方法</h3>
+<p><strong>问题1：</strong>在其中一个开发板中部署.Net5环境后，重启开发板就需要重新将环境配置到环境变量中，没有要运行程序需要先运行</p>
+<pre><code class="lang-pascal">source  ~/.bashrc
+</code></pre>
+<p>在运行</p>
+<pre><code class="lang-C#">dotnet ActionPower.WebApi.dll --urls=&quot;http://192.168.0.232:9001&quot;
+</code></pre>
+<p>才可以部署成功，这就造成在开发板中设置开机自动启动WebApi网页无法实现。</p>
+<p><strong>解决方法:</strong>暂时每次先手动运行这两条命令，具体解决版本还需要在研究</p>
+<p><strong>问题2：</strong>在板子上发布的WebApi程序在局域网的PC电脑上访问网页，现在正常，而在板子的网页浏览器程序中打开，只显示网站，页面刷不出来。然后重启开发板后，浏览器就提示错误。</p>
+<p><strong>解决方法:</strong>待解决</p>
+<h2 id="2-avalonia-">2.基于Avalonia开发界面程序验证</h2>
+<h3 id="2-1-">2.1开发环境搭建</h3>
+<p>因为此程序也是基于.net环境运行的如果在发布WebAPI程序中已经配置好了环境，此步骤就可以跳过，只是运行程序时使用的命令变更为:</p>
+<pre><code class="lang-C#">dotnet ActionPwoer.AvaloniaTest.dll
+</code></pre>
+<p>其他都一样，如果没有配置.net环境，可以参照1.1开发环境搭建步骤</p>
+<h3 id="2-2-">2.2程序创建及编码</h3>
+<h3 id="2-3-">2.3验证结果</h3>
+<h3 id="2-4-">2.4遇到的问题及解决方法</h3>
+<h2 id="3-vue-">3.基于Vue开发网页前端验证</h2>
+<h3 id="3-1-">3.1开发环境搭建</h3>
+<p>3.1.1将下载的node.js包拷贝到嵌入式开发板中。我这里将拷贝到usr目录下，具体拷贝过程可以参照1.1中文件拷贝部分的操作</p>
+<p>3.1.2依次运行</p>
+<pre><code class="lang-pascal">ln -s /usr/node/bin/npm /usr//bin/
+ln -s /usr/node/bin/node /usr//bin/
+node -v
+</code></pre>
+<p>注意：/usr/node/bin是你实际拷贝我文件的路径。这里是将node文件拷贝到usr下的,所以就是/usr/node/bin</p>
+<p>在运行node -v后,如果显示-/bin/sh: node: Permission denied。说明没有权限，需要运行</p>
+<pre><code class="lang-pascal">chmod 777 /usr/node/bin/node
+</code></pre>
+<p>如果显示v16.13.1表示node环境配置成功。这是node的版本号。</p>
+<p>3.1.3运行npm -v，如果显示-/bin/sh: node: Permission denied。说明没有权限，需要运行</p>
+<pre><code class="lang-pascal">chmod 777 /usr/node/bin/npm
+</code></pre>
+<p>如果显示/usr/share/node/bin/npm: line 1: ../lib/node_modules/npm/bin/npm-cli.js: not found</p>
+<p>需要运行</p>
+<pre><code class="lang-pascal">export PATH=&quot;/usr/node/bin:$PATH&quot;
+</code></pre>
+<p>如果运行npm -v提示</p>
+<pre><code class="lang-pascal">npm &lt;command&gt;
+
+Usage:
+
+npm install        install all the dependencies in your project
+npm install &lt;foo&gt;  add the &lt;foo&gt; dependency to your project
+npm test           run this project&#39;s tests
+npm run &lt;foo&gt;      run the script named &lt;foo&gt;
+npm &lt;command&gt; -h   quick help on &lt;command&gt;
+npm -l             display usage info for all commands
+npm help &lt;term&gt;    search for help on &lt;term&gt;
+npm help npm       more involved overview
+
+All commands:
+
+    access, adduser, audit, bin, bugs, cache, ci, completion,
+    config, dedupe, deprecate, diff, dist-tag, docs, doctor,
+    edit, exec, explain, explore, find-dupes, fund, get, help,
+    hook, init, install, install-ci-test, install-test, link,
+    ll, login, logout, ls, org, outdated, owner, pack, ping,
+    pkg, prefix, profile, prune, publish, rebuild, repo,
+    restart, root, run-script, search, set, set-script,
+    shrinkwrap, star, stars, start, stop, team, test, token,
+    uninstall, unpublish, unstar, update, version, view, whoami
+
+Specify configs in the ini-formatted file:
+    /.npmrc
+or on the command line via: npm &lt;command&gt; --key=value
+
+More configuration info: npm help config
+Configuration fields: npm help 7 config
+
+npm@8.1.2 /lib/node_modules/npm
+</code></pre>
+<p>则需要运行</p>
+<pre><code class="lang-pascal">ln -sf /usr/node/lib/node_modules/npm/bin/npm-cli.js /usr/node/bin/npm
+</code></pre>
+<p>3.1.4本来应该用nginx来运行vue程序的但是在安装nginx时缺一些库，配置又比较麻烦。所以这里就改用了http-server来发布vue网页。具体步骤如下</p>
+<p>3.1.4.1在嵌入型arm板上连接外网热点。</p>
+<p>3.1.4.2正在PuTTY中运行</p>
+<pre><code class="lang-pascal"> npm install -g http-server
+</code></pre>
+<p>等待安装完成后如图所示，</p>
+<p><img src="toc/images/image-20230720170721388.png" alt="image-20230720170721388"></p>
+<p>然后运行</p>
+<pre><code>http-server
+</code></pre><p>显示如下界面表示配置完成，此时就可以访问网页了</p>
+<p><img src="toc/images/image-20230720170622243.png" alt="image-20230720170622243"></p>
+<p>如果运行http-server提示not found</p>
+<p><img src="toc/images/image-20230721094412243.png" alt="image-20230721094412243"></p>
+<p>依次运行</p>
+<pre><code class="lang-pascal">npm config get prefix
+export PATH=$PATH:/usr/node/bin
+source ~/.bashrc
+npm install -g http-server
+http-server -p 3000
+</code></pre>
+<p><img src="toc/images/image-20230721094615026.png" alt="image-20230721094615026"></p>
+<h3 id="3-2-">3.2程序创建及编码</h3>
+<p>3.2.1新建一个Vue项目的存放目录，我这里在E盘新建了一个VueDemo的目录用于存放vue的程序。然后进入此文件的dos窗口。可以在cdm中定位到这个目录，也可以在打开的目录位置的框中输入cmd。</p>
+<p>3.2.2在dos中输入</p>
+<pre><code class="lang-vue">vue create vuedemo
+</code></pre>
+<p>这里的vuedemo是项目的名称，可以给你自己的需求填写，要注意不能使用大写字母和中文。然后回车，出现如下界面</p>
+<p><img src="toc/images/image-20230720171829197.png" alt="image-20230720171829197"></p>
+<p>这里选择是vue2的项目还是vue3的项目。可以按上下箭头选择，选择好后回车。根据自己的需求选择。我这里选择vue2。剩下的就是耐心等待，最后出现如下界面表示项目创建完成</p>
+<p><img src="toc/images/image-20230720172106171.png" alt="image-20230720172106171"></p>
+<p>可以按它的提示，运行</p>
+<pre><code class="lang-vue">cd myvue
+npm run serve
+</code></pre>
+<p>出现如下界面表示本地发布成功</p>
+<p><img src="toc/images/image-20230720172318724.png" alt="image-20230720172318724"></p>
+<p>可以在浏览器中输入对应的地址查看网页</p>
+<p><img src="toc/images/image-20230720172355766.png" alt="image-20230720172355766"></p>
+<p>​    具体创建项目的步骤也可以参照<a href="https://blog.csdn.net/Monsters___/article/details/126552454">(44条消息) 如何创建一个vue项目（详细步骤）<em>创建vue项目</em>小菜猿_的博客-CSDN博客</a>这个网页来实现</p>
+<p>​    3.2.3在嵌入式arm板中发布。</p>
+<p>​        3.2.3.1用vscode打开刚刚创建的vue程序文件，然后点击Terminal下的New Terminal</p>
+<p><img src="toc/images/image-20230720172643104.png" alt="image-20230720172643104"></p>
+<p>会出现一个输入命令的框。输入</p>
+<p>​    </p>
+<pre><code class="lang-vue">npm run build
+</code></pre>
+<p>出现如下界面</p>
+<p><img src="toc/images/image-20230720173113642.png" alt="image-20230720173113642"></p>
+<p>此时会在项目中出现一个dist文件夹这个文件夹就是要发布的程序文件</p>
+<p>​        3.2.3.2将dist文件拷贝到嵌入式arm板中，然后利用PuTTY定位到dist文件夹中，然后运行</p>
+<p>​    </p>
+<pre><code class="lang-pascal">http-server
+</code></pre>
+<p>此时在嵌入式liunx中运行vue程序就全部完成。</p>
+<h3 id="3-3-">3.3验证结果</h3>
+<p>从验证的结果来看，在嵌入式liunx中发布vue程序是完全可以实现。但是这里没有使用nginx服务器发布网页，可能功能会少一些。还需要在研究在http-server下如何修改发布地址的端口问题。或者继续将nginx研究完成。</p>
+<h3 id="3-4-">3.4遇到的问题及解决方法</h3>
+<p>问题1:刚开始下载错nodejs的包了，运行node -v时总是提示找不到node。后来发现是包的问题，又从新下载了。具体文件包名称对应的包如下图</p>
+<p><img src="toc/images/Snipaste_2023-07-20_15-33-35.png" alt="Snipaste_2023-07-20_15-33-35"></p>
+<p>解决方法：从新下载nodejs包</p>
+<p>问题2：搭建nginx时提示缺少libpcre.so.3，下载拷贝进去还是不行</p>
+<p>解决方法:不使用nginx服务器，使用http-server来发布.如果有空还需要在研究nginx服务器</p>
+<p>问题3：在搭建完后运行npm -v显示如下图，以为npm已经配置成功了，但是在使用是才发现配置失败了</p>
+<p><img src="toc/images/image-20230720174224544.png" alt="image-20230720174224544"></p>
+<p>解决办法：运行ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm命令</p>
+<p>问题4：在运行命令时总是出现Permission denied没有权限的提示。</p>
+<p>解决办法.使用chmod  777 来解决</p>
+<h2 id="4-">4.验证总结果及对比总结</h2>
+<a href="/toc/zip/DownLoad.zip" download>点击这里下载文件</a>
+          	</article>
+        </div>
+		</div>
+  </body>
+</html>
+<script type="text/javascript" src="toc/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="toc/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="toc/js/ztree_toc.js"></script>
+<script type="text/javascript" src="toc_conf.js"></script>
+
+<SCRIPT type="text/javascript" >
+<!--
+$(document).ready(function(){
+    var css_conf = eval(markdown_panel_style);
+    $('#readme').css(css_conf)
+    
+    var conf = eval(jquery_ztree_toc_opts);
+		$('#tree').ztree_toc(conf);
+});
+//-->
+</SCRIPT>
